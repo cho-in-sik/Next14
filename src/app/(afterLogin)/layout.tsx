@@ -5,6 +5,8 @@ import Image from 'next/image';
 import ZLogo from '../../../public/zlogo.png';
 import NavMenu from '@/app/(afterLogin)/_component/NavMenu';
 import LogoutButton from './_component/LogoutButton';
+import TrendSection from './_component/TrendSection';
+import FollowRecommend from './_component/FollowRecommend';
 
 export default function AfterLoginLayout({
   children,
@@ -46,6 +48,14 @@ export default function AfterLoginLayout({
                 </svg>
                 <input type="search" />
               </form>
+
+              <TrendSection />
+              <div className={style.followRecommend}>
+                <h3>팔로우 추천</h3>
+                <FollowRecommend />
+                <FollowRecommend />
+                <FollowRecommend />
+              </div>
             </div>
           </section>
         </div>
