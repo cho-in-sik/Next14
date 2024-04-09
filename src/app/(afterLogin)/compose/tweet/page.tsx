@@ -1,3 +1,5 @@
-export default function Tweet() {
-  return <div>게시하기</div>;
+import Home from '@/app/(afterLogin)/home/page';
+
+export default function Page() {
+  return <Home />;
 }
