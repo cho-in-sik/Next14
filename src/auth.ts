@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { NextResponse } from 'next/server';
 
 export const {
   handlers: { GET, POST },
@@ -11,6 +12,15 @@ export const {
     signIn: '/i/flow/login',
     newUser: '/i/flow/signup',
   },
+  //세션이 없다면 여기로 리다이렉트
+  // callbacks: {
+  //   async authorized({ request, auth }) {
+  //     if (!auth) {
+  //       return NextResponse.redirect('http://localhost:3000/i/flow/login');
+  //     }
+  //     return true;
+  //   },
+  // },
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
