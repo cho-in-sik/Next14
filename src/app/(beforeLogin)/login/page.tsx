@@ -6,10 +6,10 @@ import { useSession } from 'next-auth/react';
 
 export default function Login() {
   const router = useRouter();
-  const session = useSession();
+  const { data: session } = useSession();
   router.replace('/i/flow/login');
 
-  if (session) {
+  if (session?.user) {
     router.replace('/home');
     return null;
   }

@@ -6,6 +6,7 @@ export const {
   auth,
   signIn,
 } = NextAuth({
+  //pages 는 로그인창 어디 페이지에 적용을 할지. 원래 Authjs 를 쓰면 로그인하는 버튼이있는 페이지를 만들어주지만 우리는 만들어둔 페이지가 있기에 이렇게 사용하기
   pages: {
     signIn: '/i/flow/login',
     newUser: '/i/flow/signup',

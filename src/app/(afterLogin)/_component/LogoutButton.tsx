@@ -5,6 +5,7 @@ import style from './logoutButton.module.css';
 import { useRouter } from 'next/navigation';
 
 export default function LogoutButton() {
+  //useSession으로 내정보 불러오기(지금 로그인중)
   const { data: me } = useSession();
   const router = useRouter();
 

@@ -35,6 +35,7 @@ export default async (prevState: any, formData: FormData) => {
     }
     console.log(await response.json());
     shouldRedirect = true;
+    //서버 signIn 불러오기 - 내가 만든거
     await signIn('credentials', {
       username: formData.get('id'),
       password: formData.get('password'),
