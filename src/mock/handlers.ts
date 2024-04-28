@@ -1,6 +1,7 @@
 import { http, HttpResponse, StrictResponse } from 'msw';
 import { faker } from '@faker-js/faker';
 
+//faker로 지난주부터 오늘까지 임의의 날짜 골라주기
 function generateDate() {
   const lastWeek = new Date(Date.now());
   lastWeek.setDate(lastWeek.getDate() - 7);
