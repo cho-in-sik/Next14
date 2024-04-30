@@ -11,7 +11,6 @@ export default function PostRecommends() {
     queryFn: getPostRecommends,
     staleTime: 10 * 1000,
     gcTime: 300 * 1000,
-    initialData: () => [],
   });
 
   return data?.map((post) => {

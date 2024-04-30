@@ -1,5 +1,5 @@
+import { QueryFunction } from '@tanstack/query-core';
 import { Post } from '@/model/Post';
-import { QueryFunction } from '@tanstack/react-query';
 
 export const getSearchResults: QueryFunction<
   Post[],
@@ -14,9 +14,9 @@ export const getSearchResults: QueryFunction<
       next: {
         tags: ['posts', 'search', searchParams.q],
       },
+      cache: 'no-store',
     },
   );
-
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 

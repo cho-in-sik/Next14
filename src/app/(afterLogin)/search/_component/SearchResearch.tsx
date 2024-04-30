@@ -19,10 +19,11 @@ export default function SearchResult({ searchParams }: Props) {
   >({
     queryKey: ['posts', 'search', searchParams],
     queryFn: getSearchResults,
-    staleTime: 10 * 1000,
+    staleTime: 1 * 1000,
     gcTime: 300 * 1000,
-    initialData: () => [],
   });
+
+  console.log(`검색어 데이터 :`, data);
 
   return data?.map((post) => {
     return <Post key={post.postId} post={post} />;
