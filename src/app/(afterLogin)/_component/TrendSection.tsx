@@ -9,15 +9,17 @@ import { getTrends } from '../_lib/getTrends';
 import { Hashtag } from '@/model/Hashtag';
 
 export default function TrendSection() {
+  const { data: session } = useSession();
+
   const { data } = useQuery<Hashtag[]>({
     queryKey: ['trends'],
     queryFn: getTrends,
     staleTime: 10 * 1000,
     gcTime: 300 * 1000,
+    enabled: !!session?.user,
   });
 
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   if (pathname === '/explore') return null;
   if (session?.user) {
