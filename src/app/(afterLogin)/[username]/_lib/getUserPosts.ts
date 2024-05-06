@@ -6,7 +6,7 @@ export const getUserPosts: QueryFunction<
   [_1: string, _2: string, string]
 > = async ({ queryKey }) => {
   const [_1, _2, username] = queryKey;
-  const res = await fetch(`http://localhost:9090/api/users/:userId/posts`, {
+  const res = await fetch(`http://localhost:9090/api/users/${username}/posts`, {
     next: {
       tags: ['user', 'posts', username],
     },
