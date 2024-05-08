@@ -1,26 +1,49 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import cookie from 'cookie';
 
 export const {
   handlers: { GET, POST },
   auth,
   signIn,
 } = NextAuth({
-  //pages 는 로그인창 어디 페이지에 적용을 할지. 원래 Authjs 를 쓰면 로그인하는 버튼이있는 페이지를 만들어주지만 우리는 만들어둔 페이지가 있기에 이렇게 사용하기
   pages: {
     signIn: '/i/flow/login',
     newUser: '/i/flow/signup',
   },
-  //세션이 없다면 여기로 리다이렉트
-  // callbacks: {
-  //   async authorized({ request, auth }) {
-  //     if (!auth) {
-  //       return NextResponse.redirect('http://localhost:3000/i/flow/login');
-  //     }
-  //     return true;
-  //   },
-  // },
+  callbacks: {
+    jwt({ token }) {
+      console.log('auth.ts jwt', token);
+      return token;
+    },
+    session({ session, newSession, user }) {
+      console.log('auth.ts session', session, newSession, user);
+      return session;
+    },
+  },
+  events: {
+    signOut(data) {
+      console.log(
+        'auth.ts events signout',
+        'session' in data && data.session,
+        'token' in data && data.token,
+      );
+      // if ('session' in data) {
+      //   data.session = null;
+      // }
+      // if ('token' in data) {
+      //   data.token = null;
+      // }
+    },
+    session(data) {
+      console.log(
+        'auth.ts events session',
+        'session' in data && data.session,
+        'token' in data && data.token,
+      );
+    },
+  },
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
@@ -37,7 +60,12 @@ export const {
             }),
           },
         );
-
+        let setCookie = authResponse.headers.get('Set-Cookie');
+        console.log('set-cookie', setCookie);
+        if (setCookie) {
+          const parsed = cookie.parse(setCookie);
+          cookies().set('connect.sid', parsed['connect.sid'], parsed); // 브라우저에 쿠키를 심어주는 것
+        }
         if (!authResponse.ok) {
           return null;
         }

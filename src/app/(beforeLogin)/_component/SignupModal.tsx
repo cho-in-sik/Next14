@@ -1,24 +1,25 @@
 'use client';
 
 import style from './signup.module.css';
-import BackButton from './BackButton';
 import onSubmit from '../_lib/signup';
+import BackButton from '@/app/(beforeLogin)/_component/BackButton';
 import { useFormState, useFormStatus } from 'react-dom';
 
-function showMessage(messasge: string | null | undefined) {
-  if (messasge === 'no_id') {
+function showMessage(message: string | null) {
+  console.log('message', message);
+  if (message === 'no_id') {
     return '아이디를 입력하세요.';
   }
-  if (messasge === 'no_name') {
+  if (message === 'no_name') {
     return '닉네임을 입력하세요.';
   }
-  if (messasge === 'no_password') {
+  if (message === 'no_password') {
     return '비밀번호를 입력하세요.';
   }
-  if (messasge === 'no_image') {
+  if (message === 'no_image') {
     return '이미지를 업로드하세요.';
   }
-  if (messasge === 'user_exists') {
+  if (message === 'user_exists') {
     return '이미 사용 중인 아이디입니다.';
   }
   return '';
@@ -27,6 +28,7 @@ function showMessage(messasge: string | null | undefined) {
 export default function SignupModal() {
   const [state, formAction] = useFormState(onSubmit, { message: null });
   const { pending } = useFormStatus();
+  console.log('state', state);
 
   return (
     <>
@@ -43,12 +45,12 @@ export default function SignupModal() {
                   아이디
                 </label>
                 <input
-                  required
                   id="id"
                   name="id"
                   className={style.input}
                   type="text"
                   placeholder=""
+                  required
                 />
               </div>
               <div className={style.inputDiv}>
@@ -56,12 +58,12 @@ export default function SignupModal() {
                   닉네임
                 </label>
                 <input
-                  required
                   id="name"
                   name="name"
                   className={style.input}
                   type="text"
                   placeholder=""
+                  required
                 />
               </div>
               <div className={style.inputDiv}>
@@ -69,12 +71,12 @@ export default function SignupModal() {
                   비밀번호
                 </label>
                 <input
-                  required
                   id="password"
                   name="password"
                   className={style.input}
                   type="password"
                   placeholder=""
+                  required
                 />
               </div>
               <div className={style.inputDiv}>
@@ -82,9 +84,9 @@ export default function SignupModal() {
                   프로필
                 </label>
                 <input
-                  required
                   id="image"
                   name="image"
+                  required
                   className={style.input}
                   type="file"
                   accept="image/*"

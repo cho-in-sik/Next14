@@ -1,7 +1,7 @@
 'use server';
 
-import { signIn } from '@/auth';
 import { redirect } from 'next/navigation';
+import { signIn } from '@/auth';
 
 export default async (prevState: any, formData: FormData) => {
   if (!formData.get('id') || !(formData.get('id') as string)?.trim()) {
@@ -19,6 +19,7 @@ export default async (prevState: any, formData: FormData) => {
   if (!formData.get('image')) {
     return { message: 'no_image' };
   }
+  formData.set('nickname', formData.get('name') as string);
   let shouldRedirect = false;
   try {
     const response = await fetch(
@@ -35,7 +36,6 @@ export default async (prevState: any, formData: FormData) => {
     }
     console.log(await response.json());
     shouldRedirect = true;
-    //서버 signIn 불러오기 - 내가 만든거
     await signIn('credentials', {
       username: formData.get('id'),
       password: formData.get('password'),
@@ -49,4 +49,5 @@ export default async (prevState: any, formData: FormData) => {
   if (shouldRedirect) {
     redirect('/home'); // try/catch문 안에서 X
   }
+  return { message: null };
 };
