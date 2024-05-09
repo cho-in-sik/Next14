@@ -3,7 +3,10 @@ export async function getTrends() {
     next: {
       tags: ['trends'],
     },
+    credentials: 'include',
+    cache: 'no-store',
   });
+
   if (!res.ok) {
     throw new Error('Failed to fetch data');
   }
