@@ -4,6 +4,7 @@ import { ChangeEventHandler, FormEventHandler, useRef, useState } from 'react';
 import style from './postForm.module.css';
 import { useSession } from 'next-auth/react';
 import { Session } from '@auth/core/types';
+import TextareaAutosize from 'react-textarea-autosize';
 
 type Props = {
   me: Session | null;
@@ -11,14 +12,53 @@ type Props = {
 
 export default function PostForm({ me }: Props) {
   const imageRef = useRef<HTMLInputElement>(null);
+  const [preView, setPreview] = useState<
+    Array<{ dataUrl: string; file: File } | null>
+  >([]);
   const [content, setContent] = useState('');
 
   const onChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     setContent(e.target.value);
   };
-
-  const onSubmit: FormEventHandler = (e) => {
+  const fileOnChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     e.preventDefault();
+    if (e.target.files) {
+      Array.from(e.target.files).forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview((prev) => {
+            const prevV = [...prev];
+            prevV[i] = {
+              dataUrl: reader.result as string,
+              file,
+            };
+            return prevV;
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+  const onRemove = (i: number) => {
+    setPreview((prev) => {
+      const prevV = [...prev];
+      prevV[i] = null;
+      return prevV;
+    });
+  };
+
+  const onSubmit: FormEventHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('content', content);
+    preView.forEach((p) => {
+      p && formData.append('images', p.file);
+    });
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
+      method: 'post',
+      credentials: 'include',
+      body: formData,
+    });
   };
 
   const onClickButton = () => {
@@ -33,11 +73,25 @@ export default function PostForm({ me }: Props) {
         </div>
       </div>
       <div className={style.postInputSection}>
-        <textarea
+        <TextareaAutosize
           value={content}
           onChange={onChange}
           placeholder="무슨 일이 일어나고 있나요?"
         />
+        <div style={{ display: 'flex' }}>
+          {preView.map(
+            (v, i) =>
+              v && (
+                <div
+                  key={i}
+                  onClick={() => onRemove(i)}
+                  style={{ flex: 1, maxHeight: '100px' }}
+                >
+                  <img src={v.dataUrl} alt="미리보기" width={100} />
+                </div>
+              ),
+          )}
+        </div>
         <div className={style.postButtonSection}>
           <div className={style.footerButtons}>
             <div className={style.footerButtonLeft}>
@@ -47,6 +101,7 @@ export default function PostForm({ me }: Props) {
                 multiple
                 hidden
                 ref={imageRef}
+                onChange={fileOnChange}
               />
               <button
                 className={style.uploadButton}
