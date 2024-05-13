@@ -1,6 +1,6 @@
 import BackButton from '@/app/(afterLogin)/_component/BackButton';
 import style from './singlePost.module.css';
-import Post from '@/app/(afterLogin)/_component/Post';
+
 import CommentForm from '@/app/(afterLogin)/[username]/status/[id]/_component/CommentForm';
 import SinglePost from './_component/SinglePost';
 import Comments from './_component/Comments';
@@ -18,6 +18,7 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const { id } = params;
+
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ['posts', id],

@@ -1,18 +1,59 @@
 'use client';
+import { MouseEventHandler } from 'react';
 import style from './post.module.css';
 import cx from 'classnames';
+import { Post } from '@/model/Post';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Props = {
   white?: boolean;
+  postId: number;
+  post?: Post;
 };
-export default function ActionButtons({ white }: Props) {
+export default function ActionButtons({ white, postId }: Props) {
+  const queryClient = useQueryClient();
   const commented = false;
   const reposted = false;
   const liked = false;
 
+  const heart = useMutation({
+    mutationFn: () => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postId}/heart`,
+      );
+    },
+    onMutate() {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+      console.log('queryKeys', queryKeys);
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === 'posts') {
+          const value: Post | Post[] | undefined =
+            queryClient.getQueryData(queryKey);
+          if (Array.isArray(value)) {
+          } else if (value) {
+            //싱글 포스트인 경우
+            value;
+          }
+        }
+      });
+    },
+    onError() {},
+    onSettled() {},
+  });
+
   const onClickComment = () => {};
-  const onClickRepost = () => {};
-  const onClickHeart = () => {};
+  const onClickRepost: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+  };
+  const onClickHeart: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+    if (liked) {
+      //unheart.mutate()
+    } else {
+      heart.mutate();
+    }
+  };
 
   return (
     <div className={style.actionButtons}>
