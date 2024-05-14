@@ -4,6 +4,7 @@ import style from './post.module.css';
 import cx from 'classnames';
 import { Post } from '@/model/Post';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 
 type Props = {
   white?: boolean;
@@ -15,6 +16,8 @@ export default function ActionButtons({ white, postId }: Props) {
   const commented = false;
   const reposted = false;
   const liked = false;
+
+  const { data: session } = useSession();
 
   const heart = useMutation({
     mutationFn: () => {
@@ -31,9 +34,31 @@ export default function ActionButtons({ white, postId }: Props) {
           const value: Post | Post[] | undefined =
             queryClient.getQueryData(queryKey);
           if (Array.isArray(value)) {
+            const index = value.findIndex((v) => v.postId === postId);
+            if (index > -1) {
+              const shallow = [...value];
+              shallow[index] = {
+                ...shallow[index],
+                Hearts: [{ userId: session?.user?.email as string }],
+                _count: {
+                  ...shallow[index]._count,
+                  Hearts: shallow[index]._count.Hearts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
           } else if (value) {
-            //싱글 포스트인 경우
-            value;
+            if (value.postId === postId) {
+              const shallow = {
+                ...value,
+                Hearts: [{ userId: session?.user?.email as string }],
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
           }
         }
       });
